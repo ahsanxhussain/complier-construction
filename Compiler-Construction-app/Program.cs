@@ -25,9 +25,9 @@ namespace Compiler_Construction_app
             Console.WriteLine(text);*/
 
             
-
+            //integer regex
             Regex integer = new Regex(@"^[-+]?\d*$");
-            Match result = integer.Match("-256256");
+            Match result = integer.Match("-24");
 
             if (result.Success)
             {
