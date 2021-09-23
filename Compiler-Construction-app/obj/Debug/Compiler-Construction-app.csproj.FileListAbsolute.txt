@@ -1,0 +1,7 @@
+C:\Users\Kashan\source\repos\Compiler-Construction-app\Compiler-Construction-app\bin\Debug\Compiler-Construction-app.exe.config
+C:\Users\Kashan\source\repos\Compiler-Construction-app\Compiler-Construction-app\bin\Debug\Compiler-Construction-app.exe
+C:\Users\Kashan\source\repos\Compiler-Construction-app\Compiler-Construction-app\bin\Debug\Compiler-Construction-app.pdb
+C:\Users\Kashan\source\repos\Compiler-Construction-app\Compiler-Construction-app\obj\Debug\Compiler-Construction-app.csproj.AssemblyReference.cache
+C:\Users\Kashan\source\repos\Compiler-Construction-app\Compiler-Construction-app\obj\Debug\Compiler-Construction-app.csproj.CoreCompileInputs.cache
+C:\Users\Kashan\source\repos\Compiler-Construction-app\Compiler-Construction-app\obj\Debug\Compiler-Construction-app.exe
+C:\Users\Kashan\source\repos\Compiler-Construction-app\Compiler-Construction-app\obj\Debug\Compiler-Construction-app.pdb
