@@ -12,10 +12,11 @@ namespace Compiler_Construction_app
         static void Main(string[] args)
         {
             //Program Start here
-            Console.Write("Enter Your Valid Syntax: ");
-            string name = Console.ReadLine();
-            regularExpression(name);
-
+            for(int i=0; i<100; i++){
+                 Console.Write("Enter Your Valid Syntax: ");
+                 string name = Console.ReadLine();
+                 regularExpression(name);
+            }
 
             /*string enter = "Enter your name";
             string[] text = enter.Split(' ');
@@ -29,7 +30,7 @@ namespace Compiler_Construction_app
             }
             Console.WriteLine(text);*/
 
-            Console.ReadLine();
+           // Console.ReadLine();
         }
 
         //Regular Function to check syntax
@@ -77,8 +78,7 @@ namespace Compiler_Construction_app
             else
                 return false;
         }
-
-
+        
         //Function for Floating number
         public static bool floatFunction(string name)
         {
