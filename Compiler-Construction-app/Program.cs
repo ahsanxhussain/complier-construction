@@ -12,12 +12,34 @@ namespace Compiler_Construction_app
         static void Main(string[] args)
         {
             //Program Start here
-            for(int i=0; i<100; i++){
-                 Console.Write("Enter Your Valid Syntax: ");
-                 string name = Console.ReadLine();
-                 regularExpression(name);
-            }
-
+            Console.WriteLine("Enter 1 to continue or Enter 0 to leave: ");
+            int inputCheck = Convert.ToInt32(Console.ReadLine());
+            
+            if(inputCheck==1){
+               loop:
+               for(int i=0; i<5; i++){
+                     Console.Write("Enter Your Valid Syntax: ");
+                     string name = Console.ReadLine();
+                     regularExpression(name);
+                     Console.WriteLine("Enter 0 to leave or Enter 1 to continue:");
+                     
+                      inputCheck = Convert.ToInt32(Console.ReadLine());
+                      if(inputCheck==0){
+                            Environment.Exit(0);
+                      } else if(inputCheck==1){
+                            goto loop;
+                      } else{
+                            Console.WriteLine("Enter a valid command: unkown command");
+                      }                             
+               } 
+               
+            } 
+            else if(inputCheck==0){
+                 Environment.Exit(0);
+            } else{
+                 Console.WriteLine("Enter a valid command: unkown command");
+                  }      
+            
             /*string enter = "Enter your name";
             string[] text = enter.Split(' ');
 
