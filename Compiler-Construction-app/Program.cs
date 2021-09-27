@@ -40,6 +40,7 @@ namespace Compiler_Construction_app
             bool floatingNum = floatFunction(name);
             bool identifier = identifierFunction(name);
             bool keyword = CheckKeyword(name);
+            bool objAlphaPattern = IsAlpha(name);
 
             if (integerNum)
                 Console.WriteLine(name + "------>: Integer");
@@ -49,6 +50,8 @@ namespace Compiler_Construction_app
                 Console.WriteLine(name + "------->: Identifier");
             else if (keyword)
                 Console.WriteLine(name + "------>: Keyword");
+            else if (objAlphaPattern)
+                Console.WriteLine(name + "------>: char");
             else
                 Console.WriteLine("Invalid Syntax");
         }
@@ -78,7 +81,20 @@ namespace Compiler_Construction_app
             else
                 return false;
         }
-        
+
+        // Function To test for char constant
+        public static bool IsAlpha(string name)  
+        {  
+            Regex objAlphaPattern = new Regex(@"[^a-zA-Z]");  
+         // return !objAlphaPattern.IsMatch(name);  
+            Match result = objAlphaPattern.Match(name);
+             
+            if (result.Success)
+                return true;
+            else
+                return false;
+        }  
+
         //Function for Floating number
         public static bool floatFunction(string name)
         {
