@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
+using System.Collections;
 
 namespace Compiler_Construction_app
 {
@@ -11,25 +12,311 @@ namespace Compiler_Construction_app
     {
         static void Main(string[] args)
         {
+
+
+
             //Program Start here
-            Console.Write("Enter Your Valid Syntax: ");
-            string name = Console.ReadLine();
-            regularExpression(name);
-
-
-            /*string enter = "Enter your name";
-            string[] text = enter.Split(' ');
-
-            string[] A = [ "hello", "hi", "bye", "voice" ];
-            Console.WriteLine(A);
-            foreach (string i in text)
-            {
+            /*Console.WriteLine("Enter 1 to continue or Enter 0 to leave: ");
+            int inputCheck = Convert.ToInt32(Console.ReadLine());
+            
+            if(inputCheck==1){
+               loop:
+               for(int i=0; i<5; i++){
+                     Console.Write("Enter Your Valid Syntax: ");
+                     string name = Console.ReadLine();
+                     regularExpression(name);
+                     Console.WriteLine("Enter 0 to leave or Enter 1 to continue:");
+                     
+                      inputCheck = Convert.ToInt32(Console.ReadLine());
+                      if(inputCheck==0){
+                            Environment.Exit(0);
+                      } else if(inputCheck==1){
+                            goto loop;
+                      } else{
+                            Console.WriteLine("Enter a valid command: unkown command");
+                      }                             
+               } 
                
-                Console.WriteLine(i);
+            } 
+            else if(inputCheck==0){
+                 Environment.Exit(0);
+            } else{
+                 Console.WriteLine("Enter a valid command: unkown command");
+                  }      
+             Console.WriteLine("Enter 1 to continue or Enter 0 to leave: ");
+            int inputCheck = Convert.ToInt32(Console.ReadLine());
+            
+            if(inputCheck==1){
+               loop:
+               for(int i=0; i<5; i++){
+                     Console.Write("Enter Your Valid Syntax: ");
+                     string name = Console.ReadLine();
+                     regularExpression(name);
+                     Console.WriteLine("Enter 0 to leave or Enter 1 to continue:");
+                     
+                      inputCheck = Convert.ToInt32(Console.ReadLine());
+                      if(inputCheck==0){
+                            Environment.Exit(0);
+                      } else if(inputCheck==1){
+                            goto loop;
+                      } else{
+                            Console.WriteLine("Enter a valid command: unkown command");
+                      }                             
+               } 
+               
+            } 
+            else if(inputCheck==0){
+                 Environment.Exit(0);
+            } else{
+                 Console.WriteLine("Enter a valid command: unkown command");
+                  } 
+            */
+
+
+            ArrayList wordBreaker = new ArrayList();
+            string input = "iff(a>=5) { console.log(hunaid) ; }";
+            string word = "";
+
+            for (int i = 0; i < input.Length; i++)
+            {
+                if (input[i] >= '0' && input[i] <= '9')
+                {
+                    var num = numFunc(input, ref i);
+                    wordBreaker.Add(num);
+                }
+
+                if (input[i] >= 'a' && input[i] <= 'z')
+                {
+                    var keyword = keyWordFun(input, ref i);
+                    wordBreaker.Add(keyword);
+                }
+
+                if (input[i] == '+' || input[i] == '-' || input[i] == '*' || input[i] == '/' || input[i] == '%' )
+                {
+                    var ope =  operatorFun(input, ref i);
+                    wordBreaker.Add(ope);
+                }
+                
+                if(input[i] == ';' || input[i] == '}' || input[i] == '{' || input[i] == '(' || input[i] == ')' || input[i] == ',' || input[i] == '$' || input[i] == '@')
+                {
+                    var ope = specialChar(input, ref i);
+                    wordBreaker.Add(ope);
+                }
+
+                if (input[i] == '=' || input[i] == '<' || input[i] == '>')
+                {
+                    var assign = assignmentOperator(input, ref i);
+                    wordBreaker.Add(assign);
+                }
+
             }
-            Console.WriteLine(text);*/
+            
+            foreach(var item in wordBreaker)
+            {
+                Console.WriteLine(item);
+            }
 
             Console.ReadLine();
+
+        }
+
+
+        //assignmentOperator
+        public static string assignmentOperator(string input, ref int i)
+        {
+            string assign = "";
+
+            while(input[i] == '=' || input[i] == '<' || input[i] == '>')
+            {
+                if (input[i] == '=')
+                {
+                    var j = input[i];
+                    assign = assign + j;
+                    if (input[i + 1] == '=')
+                    {
+                        j = input[i];
+                        assign = assign + j;
+                        i++;
+                        return assign;
+                    }
+                    else
+                    {
+                        return assign;
+                    }
+                }
+
+                if (input[i] == '<')
+                {
+                    var j = input[i];
+                    assign = assign + j;
+                    if (input[i + 1] == '=')
+                    {
+                        j = input[i];
+                        assign = assign + j;
+                        i++;
+                        return assign;
+                    }
+                    else
+                    {
+                        return assign;
+                    }
+                }
+
+                if (input[i] == '>')
+                {
+                    var j = input[i];
+                    assign = assign + j;
+                    if (input[i + 1] == '=')
+                    {
+                        j = input[i];
+                        assign = assign + j;
+                        i++;
+                        return assign;
+                    }
+                    else
+                    {
+                        return assign;
+                    }
+                }
+            }
+
+            i--;
+            return assign;
+            
+        }
+
+
+        //special character
+        public static string specialChar(string input, ref int i)
+        {
+            string ope = "";
+            while (input[i] == ';' || input[i] == '{' || input[i] == '}' || input[i] == '(' || input[i] == ')' || input[i] == ',' || input[i] == '$' || input[i] == '@')
+            {
+                
+                var j = input[i];
+                ope = ope + j;
+                i++;
+
+                
+
+                if (i < input.Length)
+                {
+                    continue;
+                }else
+                {
+                    break;
+                }
+                
+            }
+            i--;
+            return ope;
+        }
+
+        //operator 
+        public static string operatorFun(string input, ref int i)
+        {
+            string ope = "";
+            while(input[i] == '+' || input[i] == '-' || input[i] == '*' || input[i] == '/' || input[i] == '%')
+            {
+                if(input[i] == '+')
+                {
+                    var j = input[i];
+                    ope = ope + j;
+                    if (input[i+1] == '+')
+                    {
+                         j = input[i];
+                        ope = ope + j;
+                        i++;
+                        return ope;
+                    }
+                    else
+                    {
+                        return ope;
+                    }
+                }
+                if (input[i] == '-')
+                {
+                    var j = input[i];
+                    ope = ope + j;
+                    if (input[i + 1] == '-')
+                    {
+                        j = input[i];
+                        ope = ope + j;
+                        i++;
+                        return ope;
+                    }
+                    else
+                    {
+                        return ope;
+                    }
+                }
+                if(input[i] == '*')
+                {
+                    var j = input[i];
+                    ope = ope + j;
+                    return ope;
+                }
+                if (input[i] == '/')
+                {
+                    var j = input[i];
+                    ope = ope + j;
+                    return ope;
+                }
+                if (input[i] == '%')
+                {
+                    var j = input[i];
+                    ope = ope + j;
+                    return ope;
+                }
+
+            }
+            i--;
+            return ope;
+        }
+
+
+
+        //for keyword
+        public static string keyWordFun(string input, ref int i)
+        {
+            string word = "";
+            while (input[i] >= 'a' && input[i] <= 'z' || input[i] >= '0' && input[i] <= '9')
+            {
+                var j = input[i];
+                word = word + j;
+                i++;
+                if (i < input.Length)
+                {
+                    continue;
+                }
+                else
+                {
+                    break;
+                }
+            }
+            return word;
+        }
+
+        //number breaker
+        public static string numFunc(string input, ref int i)
+        {
+            string num = "";
+            while (input[i] >= '0' && input[i] <= '9' || input[i] == '.' || input[i] == ',')
+            {
+                var j = input[i];
+                num = num + j;
+                i++;
+                if (i < input.Length)
+                {
+                    continue;
+                }
+                else
+                {
+                    break;
+                }
+                
+            }
+            return num;
         }
 
         //Regular Function to check syntax
@@ -39,6 +326,7 @@ namespace Compiler_Construction_app
             bool floatingNum = floatFunction(name);
             bool identifier = identifierFunction(name);
             bool keyword = CheckKeyword(name);
+            bool objAlphaPattern = IsAlpha(name);
 
             if (integerNum)
                 Console.WriteLine(name + "------>: Integer");
@@ -48,6 +336,8 @@ namespace Compiler_Construction_app
                 Console.WriteLine(name + "------->: Identifier");
             else if (keyword)
                 Console.WriteLine(name + "------>: Keyword");
+            else if (objAlphaPattern)
+                Console.WriteLine(name + "------>: char");
             else
                 Console.WriteLine("Invalid Syntax");
         }
@@ -55,7 +345,7 @@ namespace Compiler_Construction_app
         //Function for identifier number
         public static bool identifierFunction(string name)
         {
-            Regex indentifier = new Regex(@"^[a-zA-Z_]+[a-zA-Z0-9_]");
+            Regex indentifier = new Regex(@"^[a-zA-Z_]+[a-zA-Z0-9_]*$");
             Match check = indentifier.Match(name);
 
             bool identifier = CheckKeyword(name);
@@ -78,6 +368,19 @@ namespace Compiler_Construction_app
                 return false;
         }
 
+
+        // Function To test for char constant
+        public static bool IsAlpha(string name)  
+        {  
+            Regex objAlphaPattern = new Regex(@"^'[/]?[a-zA-Z0-9@%$#!^(){}]'");  
+         // return !objAlphaPattern.IsMatch(name);  
+            Match result = objAlphaPattern.Match(name);
+             
+            if (result.Success)
+                return true;
+            else
+                return false;
+        }  
 
         //Function for Floating number
         public static bool floatFunction(string name)
