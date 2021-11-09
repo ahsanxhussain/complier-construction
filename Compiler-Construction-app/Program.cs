@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
 using System.Collections;
+using System.IO;
 
 namespace Compiler_Construction_app
 {
@@ -72,208 +73,558 @@ namespace Compiler_Construction_app
                   } 
             */
 
+           
+
+
+
+
+
+           
+
+            
+
 
             ArrayList wordBreaker = new ArrayList();
-            string input = "iff(a>=5) { console.log(hunaid) ; }";
+            string filePath = @"C:\demo\file.txt";
+
+            string input = File.ReadAllText(filePath);
+            //string input1 = File.ReadAllText(filePath);
+            //Console.WriteLine(input1);
             string word = "";
 
             for (int i = 0; i < input.Length; i++)
             {
-                if (input[i] >= '0' && input[i] <= '9')
+                try
                 {
-                    var num = numFunc(input, ref i);
-                    wordBreaker.Add(num);
-                }
+                    //for comments
+                    if (input[i] == '/')
+                    {
+                        if (input[i + 1] == '/')
+                        {
+                            i += 2;
+                            singleLineComments(input, ref i);
+                        }
+                        if (input[i + 1] == '*')
+                        {
+                            i += 2;
+                            //doubleLineComments(ref input , ref i);
+                        }
+                    }
+                    if(input[i] == '"')
+                    {
+                        i++;
+                        stringAnalyzer(input, ref i);
+                    }
+                    //for integers
+                    if (reNumber.IsMatch(input[i].ToString()))
+                    {
+                        //either int or float
+                        numFunc(input, ref i);
+                        //wordBreaker.Add(num);
+                    }
+                    if (reAlphabat.IsMatch(input[i].ToString()))
+                    {
 
-                if (input[i] >= 'a' && input[i] <= 'z')
-                {
-                    var keyword = keyWordFun(input, ref i);
-                    wordBreaker.Add(keyword);
-                }
+                        alphabet_analyzer(input, ref i);
+                        //wordBreaker.Add(keyword);
+                    }
+                    if (rePunctuators.IsMatch(input[i].ToString()))
+                    {
 
-                if (input[i] == '+' || input[i] == '-' || input[i] == '*' || input[i] == '/' || input[i] == '%' )
-                {
-                    var ope =  operatorFun(input, ref i);
-                    wordBreaker.Add(ope);
+                        specialChar(input, ref i);
+                        //wordBreaker.Add(ope);
+                    }
+                    if (input[i].ToString() == "'")
+                    {
+                        string s = @"\";
+                        Console.WriteLine(s);
+                        if (input[i + 1].ToString() == s)
+                        {
+                            Console.WriteLine(input[i + 1]);
+                            doublevalue(input, ref i);
+                        }
+                        else
+                        {
+                            charAnalyzer(input, ref i);
+                        }
+
+                    }
+                    if(input[i] == '\n')
+                    {
+                        lineIncrease(ref i);
+                    }
                 }
+                catch(Exception e)
+                {
+
+                }
+               
+
                 
-                if(input[i] == ';' || input[i] == '}' || input[i] == '{' || input[i] == '(' || input[i] == ')' || input[i] == ',' || input[i] == '$' || input[i] == '@')
-                {
-                    var ope = specialChar(input, ref i);
-                    wordBreaker.Add(ope);
-                }
-
-                if (input[i] == '=' || input[i] == '<' || input[i] == '>')
-                {
-                    var assign = assignmentOperator(input, ref i);
-                    wordBreaker.Add(assign);
-                }
 
             }
             
             foreach(var item in wordBreaker)
             {
                 Console.WriteLine(item);
+                //regularExpression(item.ToString());
             }
 
             Console.ReadLine();
 
         }
 
-
-        //assignmentOperator
-        public static string assignmentOperator(string input, ref int i)
+        //keyWords List
+        static IDictionary<string, string> keyWordList = new Dictionary<string, string>()
         {
-            string assign = "";
+            {"int", "intDataType"},
+            {"float", "floatDataType"},
+            {"bool", "dataType"},
+            {"string", "dataType"},
+            {"char", "dataType"},
+            {"List", "List"},
+            {"public", "access-modifier"},
+            {"private", "access-modifier"},
+            {"protected", "access-modifier"},
+            {"static", "static"},
+            {"abstract", "abstract"},
+            {"class", "class"},
+            {"void", "void"},
+            {"while", "while"},
+            {"if", "if"},
+            {"else", "else"},
+            {"for", "for"},
+            {"do", "do"},
+            {"break", "break"},
+            {"true", "bool-Const"},
+            {"false", "bool-Const"},
+            {"include", "include"},
+        };
 
-            while(input[i] == '=' || input[i] == '<' || input[i] == '>')
+
+        //symbols
+        static IDictionary<string, string> localSymbol = new Dictionary<string, string>()
+        {
+            {"{", "{"},
+            {"}", "}"},
+            {")", ")"},
+            {"(", "("},
+            {"[", "["},
+            {"]", "]"},
+            {";", ";"},
+            {",", ","},
+            {":", ":"},
+            {"/", "/"},
+            {"*", "*"},
+            {"\\", "Lexical Erro"},
+            {"?", "Lexical Error"},
+        };
+
+        //regex For if/Else Condition
+        public static Regex reAlphabat = new Regex(@"^[A-Za-z]$");
+        public static Regex reNumber = new Regex(@"^[0-9]$");
+        public static Regex rePunctuators = new Regex(@"^,|.|;|{|}|[|]|(|)|:$");
+        public static Regex identifier = new Regex(@"^[a-zA-Z_]+[a-zA-Z0-9_]*$");
+        public static Regex floating_num = new Regex(@"^[-+]?([0-9]*|\d*\.\d{1}?\d*)$");
+        public static Regex integer = new Regex(@"^[-+]?\d*$");
+        public static Regex alphaPattern = new Regex(@"^'[/]?[a-zA-Z0-9@%$#!^(){}]'");
+        //public static Regex reAllPunctuators = new Regex(@"^[\x20-\x2f]|[\x3A-\x40]|[\x5B-\xgE]|[\x7B-\x7E]|'$");
+
+
+        public static int lineNumber =0;
+        //line Increase
+        public static bool lineIncrease(ref int index)
+        {
+            lineNumber++;
+            return true;
+        }
+
+        //generate Tokens
+        public static bool generateToken(string value, string class_ )
+        {
+            string content = "<"+ value + "," + class_ +","+ lineNumber + ">";
+            Console.WriteLine(content);
+            return true;
+        }
+
+        //lexical Error function
+        public static bool generateError(string value, string outPath)
+        {
+            string content = "<" + value + ", lexical Error" + "," + lineNumber + ">";
+            Console.WriteLine(content);
+            return true;
+
+        }
+
+        //for string
+        public static void stringAnalyzer(string input, ref int index)
+        {
+            try
             {
-                if (input[i] == '=')
+                string temp = "";
+                while(input[index] != '"')
                 {
-                    var j = input[i];
-                    assign = assign + j;
-                    if (input[i + 1] == '=')
-                    {
-                        j = input[i];
-                        assign = assign + j;
-                        i++;
-                        return assign;
-                    }
-                    else
-                    {
-                        return assign;
-                    }
+                    temp += input[index];
+                    index++;
                 }
 
-                if (input[i] == '<')
-                {
-                    var j = input[i];
-                    assign = assign + j;
-                    if (input[i + 1] == '=')
-                    {
-                        j = input[i];
-                        assign = assign + j;
-                        i++;
-                        return assign;
-                    }
-                    else
-                    {
-                        return assign;
-                    }
-                }
+                index++;
+                //Console.WriteLine(temp);
+                generateToken(temp, "string_const");
 
-                if (input[i] == '>')
-                {
-                    var j = input[i];
-                    assign = assign + j;
-                    if (input[i + 1] == '=')
-                    {
-                        j = input[i];
-                        assign = assign + j;
-                        i++;
-                        return assign;
-                    }
-                    else
-                    {
-                        return assign;
-                    }
-                }
+            }
+            catch(Exception e)
+            {
+
             }
 
-            i--;
-            return assign;
+        }
+
+        //Single line comments
+        public static void singleLineComments(string input, ref int index)
+        {
+            try
+            {
+                string temp = "";
+
+                while (input[index] != '\n')
+                {
+                    if(input[index] != '\r')
+                    {
+                        temp += input[index];
+                        index++;
+                    }
+                    else
+                    {
+                        index++;
+                    }
+                    
+                    
+                }
+                //Console.WriteLine(temp);
+                generateToken(temp, "singleLineComments");
+            }
+            catch (Exception e)
+            {
+                //Console.WriteLine(e);
+            }
+        }
+
+        //keyWordeChecker
+        public static bool keyWordReChecker(ref string temp, out string type)
+        {
+            if(keyWordList.TryGetValue(temp, out type))
+            {
+                return true;
+            }else
+            {
+                return false;
+            }
+        }
+
+        //double char 
+        public static void doublevalue(string input, ref int index)
+        {
+            string temp = "";
+            temp += input[index];
+            index++;
+
+            while (input[index].ToString() != "'")
+            {
+                temp += input[index];
+                index++;
+            }
+
+            if (alphaPattern.IsMatch(temp))
+            {
+                generateToken(temp, "char");
+            }
+            else
+            {
+                generateError(temp, "Lexical Error");
+            }
+        }
+
+        //charAnalyzer
+        public static void charAnalyzer(string input, ref int index)
+        {
+            string temp = "";
+
+            //got first
+            temp += input[index];
+            index++;
+            while (input[index].ToString() != "'")
+            {
+                if (reAlphabat.IsMatch(input[index].ToString()))
+                {
+                    temp += input[index];
+                    index++;
+                }
+                
+
+            }
+            temp += input[index];
+
+            if (alphaPattern.IsMatch(temp))
+            {
+                generateToken(temp, "char");
+            }
+            else
+            {
+                generateError(temp, "lexical Error");
+            }
+           
+        }
+
+        //alphabet
+        public static bool alphabet_analyzer( string input, ref int index)
+        {
+            string type;
+            string temp = "";
+            temp += input[index];
+
+            while (true)
+            {
+                if(reAlphabat.IsMatch(input[index + 1].ToString())){
+                    index++;
+                    temp += input[index];
+                }
+                else if (reNumber.IsMatch(input[index+1].ToString()))
+                {
+                    index++;
+                    temp += input[index];
+                }
+                else
+                {
+                    //if keyWord matches then just generate token
+                    if (keyWordReChecker(ref temp, out type))
+                    {
+                        generateToken(temp, type);
+                        index++;
+                        return true;
+                    }
+                    else
+                    {
+                        while (true)
+                        {
+                            if(identifierFunction(temp, ref type))
+                            {
+                                index++;
+                                generateToken(temp, type);
+                                return true;
+                            }
+                        }
+                    }
+                    
+                }
+            }
+        }
+
+
+        //number breaker
+        public static void numFunc(string input, ref int index)
+        {
+            //string type;
+            bool flag = false;
+            bool flagfloat = false;
+            string temp = "";
+            //123.2
+            do
+            {
+                var j = input[index];
+                temp = temp + j;
+                index++;
+
+
+            } while (reNumber.IsMatch(input[index].ToString()) || input[index] == '.' || reAlphabat.IsMatch(input[index].ToString()));
+
+           
+            if (integer.IsMatch(temp))
+            {
+                index++;
+                generateToken(temp, "int_const");
+
+            }else if (floating_num.IsMatch(temp))
+            {
+                index++;
+                generateToken(temp, "float_const");
+            }
+            else
+            {
+                index++;
+                generateError(temp, "lexical_Error");
+            }
             
         }
 
 
         //special character
-        public static string specialChar(string input, ref int i)
+        public static void specialChar(string input, ref int i)
         {
-            string ope = "";
-            while (input[i] == ';' || input[i] == '{' || input[i] == '}' || input[i] == '(' || input[i] == ')' || input[i] == ',' || input[i] == '$' || input[i] == '@')
+            string result;
+
+            if (input[i] == '+')
             {
-                
-                var j = input[i];
-                ope = ope + j;
+                if (input[i + 1] == '+')
+                {
+                    i += 1;
+                    generateToken("++", "inc_op");
+                }
+                else if (input[i + 1] == '.')
+                {
+                    numFunc(input, ref i);
+                }
+                else if (reNumber.IsMatch(input[i + 1].ToString()))
+                {
+                    numFunc(input, ref i);
+                }
+                else if (input[i + 1] == '=')
+                {
+                    i += 1;
+                    generateToken("+=", "add-assign");
+                }
+                else
+                {
+                    i += 1;
+                    generateToken("+", "op");
+                }
+            }
+            else if (input[i] == '-')
+            {
+                if (input[i + 1] == '-')
+                {
+                    i += 1;
+                    generateToken("--", "dec_op");
+                }
+                else if (input[i + 1] == '.')
+                {
+                    numFunc(input, ref i);
+                }
+                else if (input[i + 1] == '=')
+                {
+                    i += 1;
+                    generateToken("-=", "dec-assign");
+                }
+                else if (reNumber.IsMatch(input[i + 1].ToString()))
+                {
+                    numFunc(input, ref i);
+                }
+                else
+                {
+                    i += 1;
+                    generateToken("-", "op");
+                }
+            }
+            else if (input[i] == '&')
+            {
+                if (input[i + 1] == '&')
+                {
+                    i += 1;
+                    generateToken("&&", "Lo_op");
+                }
+                else
+                {
+                    i++;
+                    generateError("&", "Lexical Error");
+                }
+            }
+            else if (input[i] == '|')
+            {
+                if (input[i + 1] == '|')
+                {
+                    i += 1;
+                    generateToken("||", "Lo_Op");
+                }
+                else
+                {
+                    i++;
+                    generateError("|", "lexical Error");
+                }
+            }
+            else if (input[i] == ',')
+            {
                 i++;
-
-                
-
-                if (i < input.Length)
-                {
-                    continue;
-                }else
-                {
-                    break;
-                }
-                
+                generateToken(",", ",");
             }
-            i--;
-            return ope;
-        }
-
-        //operator 
-        public static string operatorFun(string input, ref int i)
-        {
-            string ope = "";
-            while(input[i] == '+' || input[i] == '-' || input[i] == '*' || input[i] == '/' || input[i] == '%')
+            else if (input[i] == '=')
             {
-                if(input[i] == '+')
+                if (input[i + 1] == '=')
                 {
-                    var j = input[i];
-                    ope = ope + j;
-                    if (input[i+1] == '+')
-                    {
-                         j = input[i];
-                        ope = ope + j;
-                        i++;
-                        return ope;
-                    }
-                    else
-                    {
-                        return ope;
-                    }
+                    i += 1;
+                    generateToken("==", "assign_op");
                 }
-                if (input[i] == '-')
+                else
                 {
-                    var j = input[i];
-                    ope = ope + j;
-                    if (input[i + 1] == '-')
-                    {
-                        j = input[i];
-                        ope = ope + j;
-                        i++;
-                        return ope;
-                    }
-                    else
-                    {
-                        return ope;
-                    }
+                    //i++;
+                    generateToken("=", "equal");
                 }
-                if(input[i] == '*')
-                {
-                    var j = input[i];
-                    ope = ope + j;
-                    return ope;
-                }
-                if (input[i] == '/')
-                {
-                    var j = input[i];
-                    ope = ope + j;
-                    return ope;
-                }
-                if (input[i] == '%')
-                {
-                    var j = input[i];
-                    ope = ope + j;
-                    return ope;
-                }
-
             }
-            i--;
-            return ope;
-        }
-
+            else if (input[i] == ' ' || input[i] == '\t')
+            {
+                //i++;
+            }
+            else if (input[i] == ',')
+            {
+                i++;
+                generateToken(",", ",");
+            }
+            else if (input[i] == '<')
+            {
+                if (input[i + 1] == '=')
+                {
+                    i += 1;
+                    generateToken("<=", "cmp_op");
+                }
+                else
+                {
+                    i++;
+                    generateToken("<", "cmp_op");
+                }
+            }
+            else if (input[i] == '>')
+            {
+                if (input[i + 1] == '=')
+                {
+                    i += 1;
+                    generateToken(">=", "cmp_op");
+                }
+                else
+                {
+                    i++;
+                    generateToken(">", "cmp_op");
+                }
+            }
+            else if (input[i] == '!')
+            {
+                if (input[i + 1] == '=')
+                {
+                    i += 1;
+                    generateToken("!=", "cmp_op");
+                }
+                else
+                {
+                    i++;
+                    generateToken("!", "not_op");
+                }
+            }
+            else if (input[i] == '.')
+            {
+                if (reNumber.IsMatch(input[i + 1].ToString()))
+                {
+                    //i += 1;
+                    numFunc(input, ref i);
+                }
+                else
+                {
+                    i++;
+                    generateToken(".", "dot");
+                }
+            }
+            else if (localSymbol.TryGetValue(input[i].ToString(), out result))
+            {
+                generateToken(input[i].ToString(), result);
+            }
+        }     
 
 
         //for keyword
@@ -297,34 +648,13 @@ namespace Compiler_Construction_app
             return word;
         }
 
-        //number breaker
-        public static string numFunc(string input, ref int i)
-        {
-            string num = "";
-            while (input[i] >= '0' && input[i] <= '9' || input[i] == '.' || input[i] == ',')
-            {
-                var j = input[i];
-                num = num + j;
-                i++;
-                if (i < input.Length)
-                {
-                    continue;
-                }
-                else
-                {
-                    break;
-                }
-                
-            }
-            return num;
-        }
 
         //Regular Function to check syntax
         public static void regularExpression(string name)
         {
             bool integerNum = integerFunction(name);
             bool floatingNum = floatFunction(name);
-            bool identifier = identifierFunction(name);
+            //bool identifier = identifierFunction(name);
             bool keyword = CheckKeyword(name);
             bool objAlphaPattern = IsAlpha(name);
 
@@ -332,8 +662,8 @@ namespace Compiler_Construction_app
                 Console.WriteLine(name + "------>: Integer");
             else if (floatingNum)
                 Console.WriteLine(name + "------>: Float Number");
-            else if (identifier)
-                Console.WriteLine(name + "------->: Identifier");
+            //else if (identifier)
+                //Console.WriteLine(name + "------->: Identifier");
             else if (keyword)
                 Console.WriteLine(name + "------>: Keyword");
             else if (objAlphaPattern)
@@ -343,17 +673,18 @@ namespace Compiler_Construction_app
         }
 
         //Function for identifier number
-        public static bool identifierFunction(string name)
+        public static bool identifierFunction(string name, ref string type)
         {
-            Regex indentifier = new Regex(@"^[a-zA-Z_]+[a-zA-Z0-9_]*$");
-            Match check = indentifier.Match(name);
-
-            bool identifier = CheckKeyword(name);
-
-            if (check.Success && !identifier)
+            if (identifier.IsMatch(name))
+            {
+                type = "ID";
                 return true;
+            }
             else
+            {
+                type =  "";
                 return false;
+            }
         }
 
         //Function for Integer number
@@ -431,5 +762,7 @@ namespace Compiler_Construction_app
 
 
         }
+
+
     }
 }
