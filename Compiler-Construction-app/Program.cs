@@ -13,84 +13,13 @@ namespace Compiler_Construction_app
     {
         static void Main(string[] args)
         {
-
-
-
-            //Program Start here
-            /*Console.WriteLine("Enter 1 to continue or Enter 0 to leave: ");
-            int inputCheck = Convert.ToInt32(Console.ReadLine());
-            
-            if(inputCheck==1){
-               loop:
-               for(int i=0; i<5; i++){
-                     Console.Write("Enter Your Valid Syntax: ");
-                     string name = Console.ReadLine();
-                     regularExpression(name);
-                     Console.WriteLine("Enter 0 to leave or Enter 1 to continue:");
-                     
-                      inputCheck = Convert.ToInt32(Console.ReadLine());
-                      if(inputCheck==0){
-                            Environment.Exit(0);
-                      } else if(inputCheck==1){
-                            goto loop;
-                      } else{
-                            Console.WriteLine("Enter a valid command: unkown command");
-                      }                             
-               } 
-               
-            } 
-            else if(inputCheck==0){
-                 Environment.Exit(0);
-            } else{
-                 Console.WriteLine("Enter a valid command: unkown command");
-                  }      
-             Console.WriteLine("Enter 1 to continue or Enter 0 to leave: ");
-            int inputCheck = Convert.ToInt32(Console.ReadLine());
-            
-            if(inputCheck==1){
-               loop:
-               for(int i=0; i<5; i++){
-                     Console.Write("Enter Your Valid Syntax: ");
-                     string name = Console.ReadLine();
-                     regularExpression(name);
-                     Console.WriteLine("Enter 0 to leave or Enter 1 to continue:");
-                     
-                      inputCheck = Convert.ToInt32(Console.ReadLine());
-                      if(inputCheck==0){
-                            Environment.Exit(0);
-                      } else if(inputCheck==1){
-                            goto loop;
-                      } else{
-                            Console.WriteLine("Enter a valid command: unkown command");
-                      }                             
-               } 
-               
-            } 
-            else if(inputCheck==0){
-                 Environment.Exit(0);
-            } else{
-                 Console.WriteLine("Enter a valid command: unkown command");
-                  } 
-            */
-
-           
-
-
-
-
-
-           
-
-            
-
-
-            ArrayList wordBreaker = new ArrayList();
+            //ArrayList wordBreaker = new ArrayList();
             string filePath = @"C:\demo\file.txt";
 
-            string input = File.ReadAllText(filePath);
+            string input = @File.ReadAllText(filePath);
             //string input1 = File.ReadAllText(filePath);
             //Console.WriteLine(input1);
-            string word = "";
+            //string word = "";
 
             for (int i = 0; i < input.Length; i++)
             {
@@ -136,18 +65,8 @@ namespace Compiler_Construction_app
                     }
                     if (input[i].ToString() == "'")
                     {
-                        string s = @"\";
-                        Console.WriteLine(s);
-                        if (input[i + 1].ToString() == s)
-                        {
-                            Console.WriteLine(input[i + 1]);
-                            doublevalue(input, ref i);
-                        }
-                        else
-                        {
-                            charAnalyzer(input, ref i);
-                        }
-
+                        //Console.WriteLine(input[i + 1]);
+                        charAnalyzer(input, ref i);
                     }
                     if(input[i] == '\n')
                     {
@@ -158,18 +77,8 @@ namespace Compiler_Construction_app
                 {
 
                 }
-               
-
-                
-
             }
             
-            foreach(var item in wordBreaker)
-            {
-                Console.WriteLine(item);
-                //regularExpression(item.ToString());
-            }
-
             Console.ReadLine();
 
         }
@@ -201,7 +110,7 @@ namespace Compiler_Construction_app
             {"include", "include"},
         };
 
-
+        //int a = 12asd;
         //symbols
         static IDictionary<string, string> localSymbol = new Dictionary<string, string>()
         {
@@ -227,7 +136,7 @@ namespace Compiler_Construction_app
         public static Regex identifier = new Regex(@"^[a-zA-Z_]+[a-zA-Z0-9_]*$");
         public static Regex floating_num = new Regex(@"^[-+]?([0-9]*|\d*\.\d{1}?\d*)$");
         public static Regex integer = new Regex(@"^[-+]?\d*$");
-        public static Regex alphaPattern = new Regex(@"^'[/]?[a-zA-Z0-9@%$#!^(){}]'");
+        public static Regex alphaPattern = new Regex(@"^'[\\]?[a-zA-Z0-9_$&+,:;=?@#|'<>.^*()%!-]'");
         //public static Regex reAllPunctuators = new Regex(@"^[\x20-\x2f]|[\x3A-\x40]|[\x5B-\xgE]|[\x7B-\x7E]|'$");
 
 
@@ -262,15 +171,41 @@ namespace Compiler_Construction_app
             try
             {
                 string temp = "";
-                while(input[index] != '"')
+                while(input[index] != '\n' && input[index] != '"')
                 {
+                    if(input[index].ToString() == @"\")
+                    {
+                        if(input[index+1] == '"')
+                        {
+                            temp += input[index];
+                            index++;
+                            temp += input[index];
+                            index++;
+                            continue;
+                        }
+                        
+                    }
+
+                    if(input[index] == '\r')
+                    {
+                        index++;
+                        continue;
+                    }
                     temp += input[index];
                     index++;
                 }
 
-                index++;
-                //Console.WriteLine(temp);
-                generateToken(temp, "string_const");
+                if(input[index] == '\n')
+                {
+                    index++;
+                    generateError(temp, "lexical Error");
+                }
+                else
+                {
+                    index++;
+                    //Console.WriteLine(temp);
+                    generateToken(temp, "string_const");
+                }
 
             }
             catch(Exception e)
@@ -279,6 +214,8 @@ namespace Compiler_Construction_app
             }
 
         }
+
+       
 
         //Single line comments
         public static void singleLineComments(string input, ref int index)
@@ -289,6 +226,7 @@ namespace Compiler_Construction_app
 
                 while (input[index] != '\n')
                 {
+
                     if(input[index] != '\r')
                     {
                         temp += input[index];
@@ -309,6 +247,8 @@ namespace Compiler_Construction_app
                 //Console.WriteLine(e);
             }
         }
+
+        
 
         //keyWordeChecker
         public static bool keyWordReChecker(ref string temp, out string type)
@@ -348,22 +288,33 @@ namespace Compiler_Construction_app
         //charAnalyzer
         public static void charAnalyzer(string input, ref int index)
         {
-            string temp = "";
+            string temp = @"";
+            
 
             //got first
             temp += input[index];
             index++;
-            while (input[index].ToString() != "'")
+
+            if(input[index].ToString() == @"\")
             {
-                if (reAlphabat.IsMatch(input[index].ToString()))
+
+                for (int i = 0; i < 3; i++)
                 {
                     temp += input[index];
                     index++;
                 }
-                
-
             }
-            temp += input[index];
+            else
+            {
+                for (int i = 0; i < 2; i++)
+                {
+                    temp += input[index];
+                    index++;
+                }
+            }
+
+            //temp += input[index];
+            index--;
 
             if (alphaPattern.IsMatch(temp))
             {
@@ -400,7 +351,7 @@ namespace Compiler_Construction_app
                     if (keyWordReChecker(ref temp, out type))
                     {
                         generateToken(temp, type);
-                        index++;
+                        //index++;
                         return true;
                     }
                     else
@@ -409,7 +360,7 @@ namespace Compiler_Construction_app
                         {
                             if(identifierFunction(temp, ref type))
                             {
-                                index++;
+                                //index++;
                                 generateToken(temp, type);
                                 return true;
                             }
@@ -426,34 +377,57 @@ namespace Compiler_Construction_app
         {
             //string type;
             bool flag = false;
-            bool flagfloat = false;
+            int flagfloat = 0;
+            int couter = 0;
             string temp = "";
-            //123.2
-            do
+            try
             {
-                var j = input[index];
-                temp = temp + j;
-                index++;
+                if (input[index] == '.')
+                {
+                    flagfloat += 1;
+                    couter++;
+                }
+                //123.2
+                do
+                {
 
+                    var j = input[index];
+                    temp = temp + j;
+                    index++;
 
-            } while (reNumber.IsMatch(input[index].ToString()) || input[index] == '.' || reAlphabat.IsMatch(input[index].ToString()));
+                    if (input[index] == '.')
+                    {
+                        flagfloat += 1;
+                        couter++;
+                    }
 
-           
-            if (integer.IsMatch(temp))
-            {
-                index++;
-                generateToken(temp, "int_const");
+                } while (reNumber.IsMatch(input[index].ToString()) || reAlphabat.IsMatch(input[index].ToString()) || flagfloat == 1 && input[index] != ';');
 
-            }else if (floating_num.IsMatch(temp))
-            {
-                index++;
-                generateToken(temp, "float_const");
+                if (couter == 2)
+                    index--;
+
+                if (integer.IsMatch(temp))
+                {
+                    //index++;
+                    generateToken(temp, "int_const");
+
+                }
+                else if (floating_num.IsMatch(temp))
+                {
+                    //index++;
+                    generateToken(temp, "float_const");
+                }
+                else
+                {
+                    //index++;
+                    generateError(temp, "lexical_Error");
+                }
             }
-            else
+            catch
             {
-                index++;
                 generateError(temp, "lexical_Error");
             }
+            
             
         }
 
@@ -598,12 +572,12 @@ namespace Compiler_Construction_app
             {
                 if (input[i + 1] == '=')
                 {
-                    i += 1;
+                    //i += 1;
                     generateToken("!=", "cmp_op");
                 }
                 else
                 {
-                    i++;
+                    //i++;
                     generateToken("!", "not_op");
                 }
             }
@@ -616,11 +590,24 @@ namespace Compiler_Construction_app
                 }
                 else
                 {
-                    i++;
+                    //i++;
                     generateToken(".", "dot");
                 }
             }
-            else if (localSymbol.TryGetValue(input[i].ToString(), out result))
+            else if (input[i] == '/')
+            {
+                //for comments
+                if (input[i + 1] == '/')
+                {
+                    i += 2;
+                    singleLineComments(input, ref i);
+                }
+                if (input[i + 1] == '*')
+                {
+                    i += 2;
+                    //doubleLineComments(ref input , ref i);
+                }
+            }else if (localSymbol.TryGetValue(input[i].ToString(), out result))
             {
                 generateToken(input[i].ToString(), result);
             }
@@ -701,17 +688,17 @@ namespace Compiler_Construction_app
 
 
         // Function To test for char constant
-        public static bool IsAlpha(string name)  
-        {  
-            Regex objAlphaPattern = new Regex(@"^'[/]?[a-zA-Z0-9@%$#!^(){}]'");  
-         // return !objAlphaPattern.IsMatch(name);  
+        public static bool IsAlpha(string name)
+        {
+            Regex objAlphaPattern = new Regex(@"^'[\\]||[a-zA-Z0-9@%$#!^(){}]'");
+            // return !objAlphaPattern.IsMatch(name);  
             Match result = objAlphaPattern.Match(name);
-             
+
             if (result.Success)
                 return true;
             else
                 return false;
-        }  
+        }
 
         //Function for Floating number
         public static bool floatFunction(string name)
