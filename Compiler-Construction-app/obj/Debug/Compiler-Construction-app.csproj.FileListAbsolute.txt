@@ -5,3 +5,20 @@ C:\Users\Kashan\source\repos\Compiler-Construction-app\Compiler-Construction-app
 C:\Users\Kashan\source\repos\Compiler-Construction-app\Compiler-Construction-app\obj\Debug\Compiler-Construction-app.csproj.CoreCompileInputs.cache
 C:\Users\Kashan\source\repos\Compiler-Construction-app\Compiler-Construction-app\obj\Debug\Compiler-Construction-app.exe
 C:\Users\Kashan\source\repos\Compiler-Construction-app\Compiler-Construction-app\obj\Debug\Compiler-Construction-app.pdb
+<<<<<<< HEAD
+C:\Users\Kashan\Desktop\Compiler-construction\complier-construction\Compiler-Construction-app\obj\Debug\Compiler-Construction-app.csproj.AssemblyReference.cache
+C:\Users\Kashan\Desktop\Compiler-construction\complier-construction\Compiler-Construction-app\obj\Debug\Compiler-Construction-app.csproj.CoreCompileInputs.cache
+C:\Users\Kashan\Desktop\Compiler-construction\complier-construction\Compiler-Construction-app\obj\Debug\Compiler-Construction-app.exe
+C:\Users\Kashan\Desktop\Compiler-construction\complier-construction\Compiler-Construction-app\obj\Debug\Compiler-Construction-app.pdb
+=======
+C:\Users\Intel\Documents\GitHub\complier-construction\Compiler-Construction-app\bin\Debug\Compiler-Construction-app.exe.config
+C:\Users\Intel\Documents\GitHub\complier-construction\Compiler-Construction-app\bin\Debug\Compiler-Construction-app.exe
+C:\Users\Intel\Documents\GitHub\complier-construction\Compiler-Construction-app\bin\Debug\Compiler-Construction-app.pdb
+C:\Users\Intel\Documents\GitHub\complier-construction\Compiler-Construction-app\obj\Debug\Compiler-Construction-app.csprojAssemblyReference.cache
+C:\Users\Intel\Documents\GitHub\complier-construction\Compiler-Construction-app\obj\Debug\Compiler-Construction-app.csproj.CoreCompileInputs.cache
+C:\Users\Intel\Documents\GitHub\complier-construction\Compiler-Construction-app\obj\Debug\Compiler-Construction-app.exe
+C:\Users\Intel\Documents\GitHub\complier-construction\Compiler-Construction-app\obj\Debug\Compiler-Construction-app.pdb
+>>>>>>> 8ed533865f153f884b4f75923d93a8569af2ad4a
+C:\Users\Kashan\Desktop\Compiler-construction\complier-construction\Compiler-Construction-app\bin\Debug\Compiler-Construction-app.exe.config
+C:\Users\Kashan\Desktop\Compiler-construction\complier-construction\Compiler-Construction-app\bin\Debug\Compiler-Construction-app.exe
+C:\Users\Kashan\Desktop\Compiler-construction\complier-construction\Compiler-Construction-app\bin\Debug\Compiler-Construction-app.pdb
